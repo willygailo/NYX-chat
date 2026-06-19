@@ -15,15 +15,6 @@
 
 ---
 
-## 📂 Repository Structure
-
-The Android application codebase is located in the [**`nyx-chat/`**](file:///home/willygailo/Documents/Cline/nyx-chat) folder.
-
-- [**`nyx-chat/`**](file:///home/willygailo/Documents/Cline/nyx-chat) — Kotlin Android Project root.
-- [**`nyx-chat/app/`**](file:///home/willygailo/Documents/Cline/nyx-chat/app) — Core app module containing the Compose UI and Hilt dependencies.
-
----
-
 ## ✨ Features
 
 - **8 Core AI Providers:** Connect dynamically to xAI Grok, OpenAI, OpenRouter, Groq, Mistral AI, Together AI, DeepSeek, and Perplexity.
@@ -32,6 +23,40 @@ The Android application codebase is located in the [**`nyx-chat/`**](file:///hom
 - **Offline Mission Log:** Every conversation is saved securely in a local Room database (SQLite) so you can review reconnaissance files anytime.
 - **Auto Language Matching:** The AI automatically detects your input language (English, Filipino/Tagalog, Spanish, Japanese, etc.) and responds in the exact same tongue.
 - **Offensive Security System Prompt:** Custom persona geared towards exploit development, CTFs, vulnerability scanning guidance, OSINT, and reverse engineering.
+
+---
+
+## 🧱 Architecture
+
+```
+com.nyx.chat/
+├── data/
+│   ├── api/              # Retrofit API definitions & data models
+│   │   ├── AiProvider.kt     # Enum defining all 8 providers
+│   │   ├── ChatRequest.kt
+│   │   ├── ChatResponse.kt
+│   │   └── RedTeamApi.kt     # Unified endpoint interface
+│   ├── local/            # Room database, entities & DAOs
+│   │   ├── AppDatabase.kt
+│   │   ├── ConversationDao.kt
+│   │   ├── ConversationEntity.kt
+│   │   ├── MessageDao.kt
+│   │   └── MessageEntity.kt
+│   └── repository/       # Single source of truth & dynamic Retrofit builder
+│       └── ChatRepository.kt
+├── di/                   # Dagger Hilt Modules
+│   └── AppModule.kt
+├── ui/
+│   ├── navigation/       # Jetpack Compose navigation graph
+│   │   └── NavGraph.kt
+│   ├── screens/
+│   │   ├── chat/         # Terminal-style chat & context loader
+│   │   ├── conversationlist/ # Card-based operation threads
+│   │   └── settings/     # Multi-key settings dialog
+│   └── theme/            # Pitch-black dark theme & monospace typography
+├── MainActivity.kt       # Single activity host
+└── NyxApp.kt             # Application controller
+```
 
 ---
 
