@@ -41,13 +41,14 @@
 ## 📸 Screenshots
 
 <p align="center">
-  <i>
-    <code>Nyana</code> / <code>chat_screen</code> / <code>settings_dialog</code><br>
-    <sup>(add your own screenshots to a <code>assets/</code> folder)</sup>
-  </i>
+  <img src="nyx-chat/app/src/main/java/com/nyx/chat/ui/screens/Screenshot_20260619-172504.jpg" alt="Screenshot 1" width="30%"/>
+  <img src="nyx-chat/app/src/main/java/com/nyx/chat/ui/screens/Screenshot_20260619-172509.jpg" alt="Screenshot 2" width="30%"/>
+  <img src="nyx-chat/app/src/main/java/com/nyx/chat/ui/screens/Screenshot_20260619-172513.jpg" alt="Screenshot 3" width="30%"/>
 </p>
-
-> **Tip:** run `adb shell screencap /sdcard/nyx_screenshot.png && adb pull /sdcard/nyx_screenshot.png` to capture screenshots from a device or emulator.
+<p align="center">
+  <img src="nyx-chat/app/src/main/java/com/nyx/chat/ui/screens/Screenshot_20260619-172517.jpg" alt="Screenshot 4" width="30%"/>
+  <img src="nyx-chat/app/src/main/java/com/nyx/chat/ui/screens/Screenshot_20260619-172534.jpg" alt="Screenshot 5" width="30%"/>
+</p>
 
 ---
 
