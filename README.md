@@ -207,5 +207,7 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 <p align="center">
   Built with ❤️ and <a href="https://x.ai">x.ai Grok</a><br>
+  <sub>Made by WILLY JR CARNASA GAILO</sub><br>
+  <sub>If you find this useful, ⭐ star the repo — it helps a lot!</sub><br>
   <sub>Nyx — Greek goddess of the night. Because the best conversations happen after dark.</sub>
 </p>
