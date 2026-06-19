@@ -1,3 +1,0 @@
--keep,allowobfuscation,allowshrinking class com.nyx.chat.ui.screens.chat.ChatViewModel
--keep,allowobfuscation,allowshrinking class com.nyx.chat.ui.screens.chat.ChatViewModel
--keep,allowobfuscation,allowshrinking class com.nyx.chat.ui.screens.conversationlist.ConversationListViewModel

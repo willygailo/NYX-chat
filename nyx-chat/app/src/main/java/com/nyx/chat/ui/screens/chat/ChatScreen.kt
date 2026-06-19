@@ -1,6 +1,15 @@
 package com.nyx.chat.ui.screens.chat
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -44,11 +53,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nyx.chat.data.local.MessageEntity
+import com.nyx.chat.ui.theme.Accent
 import com.nyx.chat.ui.theme.BotBubble
+import com.nyx.chat.ui.theme.DarkBackground
+import com.nyx.chat.ui.theme.RedTeamRed
+import com.nyx.chat.ui.theme.TerminalGreen
 import com.nyx.chat.ui.theme.UserBubble
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,15 +77,13 @@ fun ChatScreen(
     onBack: () -> Unit,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
-    val messages by viewModel.getMessages(conversationId).collectAsState()
-    val uiState by viewModel.uiState.collectAsState()
-    val listState = rememberLazyListState()
+    val messages        by viewModel.getMessages(conversationId).collectAsState()
+    val uiState         by viewModel.uiState.collectAsState()
+    val listState        = rememberLazyListState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(messages.size) {
-        if (messages.isNotEmpty()) {
-            listState.animateScrollToItem(messages.size - 1)
-        }
+        if (messages.isNotEmpty()) listState.animateScrollToItem(messages.size - 1)
     }
 
     LaunchedEffect(uiState.error) {
@@ -77,23 +94,47 @@ fun ChatScreen(
     }
 
     Scaffold(
+        containerColor = DarkBackground,
         topBar = {
             TopAppBar(
-                title = { Text("Nyx") },
+                title = {
+                    Column {
+                        Text(
+                            text       = "🔴 RED TEAM AI",
+                            color      = RedTeamRed,
+                            fontSize   = 16.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontFamily = FontFamily.Monospace
+                        )
+                        Text(
+                            text       = "v2.1.0.0 · ${uiState.provider.displayName}",
+                            color      = Accent,
+                            fontSize   = 10.sp,
+                            fontFamily = FontFamily.Monospace
+                        )
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = RedTeamRed
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background,
-                    titleContentColor = MaterialTheme.colorScheme.onBackground
+                    containerColor = Color(0xFF0A0A12)
                 )
             )
         },
         snackbarHost = {
             SnackbarHost(snackbarHostState) { data ->
-                Snackbar(snackbarData = data)
+                Snackbar(
+                    snackbarData    = data,
+                    containerColor  = Color(0xFF1A0000),
+                    contentColor    = RedTeamRed
+                )
             }
         }
     ) { padding ->
@@ -101,60 +142,160 @@ fun ChatScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .background(DarkBackground)
         ) {
+            // ── Message list ─────────────────────────────────────────────
             LazyColumn(
-                state = listState,
+                state    = listState,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp, vertical = 8.dp)
             ) {
+                // Welcome banner if empty
+                if (messages.isEmpty()) {
+                    item {
+                        WelcomeBanner()
+                    }
+                }
+
                 items(messages, key = { it.id }) { message ->
-                    MessageBubble(message = message)
+                    AnimatedVisibility(
+                        visible = true,
+                        enter   = fadeIn() + slideInVertically(initialOffsetY = { it / 2 })
+                    ) {
+                        MessageBubble(message = message)
+                    }
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
 
+            // ── Input bar ────────────────────────────────────────────────
             InputBar(
-                text = uiState.inputText,
-                isLoading = uiState.isLoading,
+                text        = uiState.inputText,
+                isLoading   = uiState.isLoading,
                 onTextChange = viewModel::onInputChanged,
-                onSend = { viewModel.sendMessage(conversationId) }
+                onSend      = { viewModel.sendMessage(conversationId) }
             )
         }
     }
 }
 
+// ── Welcome banner (shown on empty chat) ──────────────────────────────────────
 @Composable
-private fun MessageBubble(message: MessageEntity) {
-    val isUser = message.role == "user"
-    val bubbleColor = if (isUser) UserBubble else BotBubble
-    val shape = RoundedCornerShape(
-        topStart = 16.dp,
-        topEnd = 16.dp,
-        bottomStart = if (isUser) 16.dp else 4.dp,
-        bottomEnd = if (isUser) 4.dp else 16.dp
+private fun WelcomeBanner() {
+    val infiniteTransition = rememberInfiniteTransition(label = "pulse")
+    val alpha by infiniteTransition.animateFloat(
+        initialValue = 0.5f,
+        targetValue  = 1f,
+        animationSpec = infiniteRepeatable(
+            animation  = tween(1000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "alphaAnim"
     )
 
     Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = if (isUser) Alignment.CenterEnd else Alignment.CenterStart
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 32.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = bubbleColor),
-            shape = shape,
-            modifier = Modifier.widthIn(max = 320.dp)
-        ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = message.content,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-                color = MaterialTheme.colorScheme.onSurface
+                text       = "🔴",
+                fontSize   = 48.sp
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text       = "RED TEAM AI v2.1.0.0",
+                color      = RedTeamRed.copy(alpha = alpha),
+                fontSize   = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+                fontFamily = FontFamily.Monospace
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text       = "Full offensive security AI",
+                color      = Accent,
+                fontSize   = 12.sp,
+                fontFamily = FontFamily.Monospace
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text       = "Recon · Exploit · Post-Exploitation · CTF",
+                color      = Color.Gray,
+                fontSize   = 10.sp,
+                fontFamily = FontFamily.Monospace
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text       = "Type anything — responds in your language 🌐",
+                color      = TerminalGreen.copy(alpha = 0.7f),
+                fontSize   = 11.sp,
+                fontFamily = FontFamily.Monospace
             )
         }
     }
 }
 
+// ── Message bubble ────────────────────────────────────────────────────────────
+@Composable
+private fun MessageBubble(message: MessageEntity) {
+    val isUser = message.role == "user"
+
+    Box(
+        modifier          = Modifier.fillMaxWidth(),
+        contentAlignment  = if (isUser) Alignment.CenterEnd else Alignment.CenterStart
+    ) {
+        Column(
+            horizontalAlignment = if (isUser) Alignment.End else Alignment.Start
+        ) {
+            // role label
+            Text(
+                text       = if (isUser) "YOU" else "RTAI",
+                color      = if (isUser) UserBubble else RedTeamRed,
+                fontSize   = 9.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace,
+                modifier   = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+            )
+
+            val bubbleGradient = if (isUser) {
+                Brush.horizontalGradient(listOf(Color(0xFF7C3AED), Color(0xFF9333EA)))
+            } else {
+                Brush.horizontalGradient(listOf(Color(0xFF0F0F1A), Color(0xFF1A1A2E)))
+            }
+
+            Card(
+                colors   = CardDefaults.cardColors(containerColor = Color.Transparent),
+                shape    = RoundedCornerShape(
+                    topStart    = 16.dp,
+                    topEnd      = 16.dp,
+                    bottomStart = if (isUser) 16.dp else 4.dp,
+                    bottomEnd   = if (isUser) 4.dp else 16.dp
+                ),
+                modifier = Modifier
+                    .widthIn(max = 320.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(bubbleGradient)
+            ) {
+                Text(
+                    text     = message.content,
+                    style    = MaterialTheme.typography.bodyMedium.copy(
+                        fontFamily = if (isUser) FontFamily.Default else FontFamily.Monospace,
+                        fontSize   = 13.sp,
+                        lineHeight = 20.sp
+                    ),
+                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+                    color    = if (isUser) Color.White else Accent
+                )
+            }
+        }
+    }
+}
+
+// ── Input bar ─────────────────────────────────────────────────────────────────
 @Composable
 private fun InputBar(
     text: String,
@@ -165,39 +306,61 @@ private fun InputBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+            .background(Color(0xFF0A0A12))
+            .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         OutlinedTextField(
-            value = text,
-            onValueChange = onTextChange,
-            placeholder = { Text("Message Nyx…") },
-            modifier = Modifier.weight(1f),
-            shape = RoundedCornerShape(24.dp),
-            maxLines = 4,
+            value           = text,
+            onValueChange   = onTextChange,
+            placeholder     = {
+                Text(
+                    "Mission input...",
+                    color      = Color.DarkGray,
+                    fontFamily = FontFamily.Monospace,
+                    fontSize   = 13.sp
+                )
+            },
+            modifier        = Modifier.weight(1f),
+            shape           = RoundedCornerShape(16.dp),
+            maxLines        = 5,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
             keyboardActions = KeyboardActions(onSend = { if (!isLoading) onSend() }),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+            colors          = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor   = RedTeamRed,
+                unfocusedBorderColor = Color.White.copy(alpha = 0.15f),
+                focusedTextColor     = Color.White,
+                unfocusedTextColor   = Color.LightGray,
+                cursorColor          = RedTeamRed
+            ),
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                fontFamily = FontFamily.Monospace,
+                fontSize   = 13.sp
             )
         )
+
         Spacer(modifier = Modifier.width(8.dp))
+
         IconButton(
-            onClick = onSend,
-            enabled = !isLoading && text.isNotBlank()
+            onClick  = onSend,
+            enabled  = !isLoading && text.isNotBlank(),
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(if (text.isNotBlank() && !isLoading) RedTeamRed else Color(0xFF2A0000))
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    strokeWidth = 2.dp
+                    modifier    = Modifier.size(20.dp),
+                    strokeWidth = 2.dp,
+                    color       = RedTeamRed
                 )
             } else {
                 Icon(
                     Icons.AutoMirrored.Filled.Send,
                     contentDescription = "Send",
-                    tint = if (text.isNotBlank()) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                    tint = Color.White,
+                    modifier = Modifier.size(20.dp)
                 )
             }
         }

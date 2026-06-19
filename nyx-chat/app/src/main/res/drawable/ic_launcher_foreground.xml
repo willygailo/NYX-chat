@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Red Team AI — skull/shield-like icon in danger red -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
+    <!-- Outer red ring -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M54,28c-14.36,0 -26,10.04 -26,22.42c0,6.74 3.59,12.8 9.2,16.84l-2.2,7.74l8.37,-4.57c3.3,1.02 6.85,1.57 10.63,1.57c14.36,0 26,-10.04 26,-22.42S68.36,28 54,28zM44,56c-2.21,0 -4,-1.79 -4,-4s1.79,-4 4,-4s4,1.79 4,4s-1.79,4 -4,4zM54,56c-2.21,0 -4,-1.79 -4,-4s1.79,-4 4,-4s4,1.79 4,4s-1.79,4 -4,4zM64,56c-2.21,0 -4,-1.79 -4,-4s1.79,-4 4,-4s4,1.79 4,4s-1.79,4 -4,4z" />
+        android:fillColor="#FF2D2D"
+        android:pathData="M54,20 C35.22,20 20,35.22 20,54 C20,72.78 35.22,88 54,88 C72.78,88 88,72.78 88,54 C88,35.22 72.78,20 54,20z M54,24 C70.57,24 84,37.43 84,54 C84,70.57 70.57,84 54,84 C37.43,84 24,70.57 24,54 C24,37.43 37.43,24 54,24z" />
+
+    <!-- Inner shield shape -->
+    <path
+        android:fillColor="#FF2D2D"
+        android:pathData="M54,30 L36,40 L36,56 C36,68 54,78 54,78 C54,78 72,68 72,56 L72,40 Z" />
+
+    <!-- Lock/key hole in white -->
+    <path
+        android:fillColor="#0A0A12"
+        android:pathData="M54,44 C50.69,44 48,46.69 48,50 C48,52.22 49.21,54.16 51,55.2 L51,62 L57,62 L57,55.2 C58.79,54.16 60,52.22 60,50 C60,46.69 57.31,44 54,44z" />
 </vector>

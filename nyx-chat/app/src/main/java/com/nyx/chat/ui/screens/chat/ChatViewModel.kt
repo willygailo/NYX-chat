@@ -3,6 +3,7 @@ package com.nyx.chat.ui.screens.chat
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nyx.chat.data.api.AiProvider
 import com.nyx.chat.data.local.MessageEntity
 import com.nyx.chat.data.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,9 +18,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ChatUiState(
-    val inputText: String = "",
+    val inputText: String  = "",
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String?     = null,
+    val provider: AiProvider = AiProvider.GROK
 )
 
 @HiltViewModel
@@ -28,7 +30,7 @@ class ChatViewModel @Inject constructor(
     private val repository: ChatRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ChatUiState())
+    private val _uiState = MutableStateFlow(ChatUiState(provider = loadProvider()))
     val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
 
     private var _messages: StateFlow<List<MessageEntity>>? = null
@@ -36,14 +38,12 @@ class ChatViewModel @Inject constructor(
     fun getMessages(conversationId: String): StateFlow<List<MessageEntity>> {
         if (_messages == null) {
             _messages = repository.observeMessages(conversationId)
-                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
         }
         return _messages!!
     }
 
-    fun onInputChanged(text: String) {
-        _uiState.update { it.copy(inputText = text) }
-    }
+    fun onInputChanged(text: String) = _uiState.update { it.copy(inputText = text) }
 
     fun sendMessage(conversationId: String) {
         val text = _uiState.value.inputText.trim()
@@ -51,31 +51,36 @@ class ChatViewModel @Inject constructor(
 
         val apiKey = getApiKey()
         if (apiKey.isNullOrEmpty()) {
-            _uiState.update { it.copy(error = "API key not set. Add it in Settings.") }
+            _uiState.update { it.copy(error = "⚠️ No API key set — go to ⚙️ Settings first!") }
             return
         }
 
+        val provider = _uiState.value.provider
         _uiState.update { it.copy(inputText = "", isLoading = true, error = null) }
 
         viewModelScope.launch {
-            val result = repository.sendMessage(conversationId, text, apiKey)
-            result.fold(
-                onSuccess = {
-                    _uiState.update { it.copy(isLoading = false) }
-                },
-                onFailure = { e ->
-                    _uiState.update { it.copy(isLoading = false, error = e.message) }
-                }
-            )
+            repository.sendMessage(conversationId, text, apiKey, provider)
+                .fold(
+                    onSuccess = { _uiState.update { it.copy(isLoading = false) } },
+                    onFailure = { e -> _uiState.update { it.copy(isLoading = false, error = e.message) } }
+                )
         }
     }
 
-    fun clearError() {
-        _uiState.update { it.copy(error = null) }
-    }
+    fun clearError() = _uiState.update { it.copy(error = null) }
+
+    fun reloadProvider() = _uiState.update { it.copy(provider = loadProvider()) }
+
+    // ── Prefs helpers ────────────────────────────────────────────────────────
+    private fun prefs() = context.getSharedPreferences("redteam_prefs", Context.MODE_PRIVATE)
 
     private fun getApiKey(): String? {
-        val prefs = context.getSharedPreferences("nyx_prefs", Context.MODE_PRIVATE)
-        return prefs.getString("api_key", null)
+        val provider = loadProvider()
+        return prefs().getString("api_key_${provider.name}", null)
+            ?: prefs().getString("api_key", null)
     }
+
+    private fun loadProvider(): AiProvider =
+        AiProvider.fromName(prefs().getString("provider", AiProvider.GROK.name) ?: AiProvider.GROK.name)
+
 }

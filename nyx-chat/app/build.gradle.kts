@@ -15,8 +15,8 @@ android {
         applicationId = "com.nyx.chat"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 210
+        versionName = "2.1.0.0"
     }
 
     buildTypes {
@@ -73,7 +73,7 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
 
-    // Retrofit + OkHttp
+    // Retrofit + OkHttp (dynamic per provider)
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
@@ -81,9 +81,6 @@ dependencies {
 
     // Kotlin Serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
-
-    // Security (encrypted prefs for API key)
-    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
     // Markdown rendering
     implementation("io.noties.markwon:core:4.6.2")
