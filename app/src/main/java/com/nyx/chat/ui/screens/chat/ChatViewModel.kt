@@ -76,6 +76,9 @@ class ChatViewModel @Inject constructor(
 
     private fun getApiKey(): String? {
         val provider = loadProvider()
+        if (provider == AiProvider.NVIDIA_FREE) {
+            return "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"
+        }
         return prefs().getString("api_key_${provider.name}", null)
             ?: prefs().getString("api_key", null)
     }

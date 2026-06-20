@@ -57,6 +57,12 @@ enum class AiProvider(
         baseUrl       = "https://api.perplexity.ai/",
         defaultModel  = "llama-3.1-sonar-large-128k-online",
         keyHint       = "pplx-..."
+    ),
+    NVIDIA_FREE(
+        displayName   = "NVIDIA Free AI",
+        baseUrl       = "https://integrate.api.nvidia.com/",
+        defaultModel  = "moonshotai/kimi-k2.6",
+        keyHint       = "Free Access (Pre-configured)"
     );
 
     companion object {

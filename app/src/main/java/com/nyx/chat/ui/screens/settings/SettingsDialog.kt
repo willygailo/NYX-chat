@@ -182,13 +182,23 @@ fun SettingsDialog(
                     modifier   = Modifier.padding(bottom = 6.dp)
                 )
 
+                val isFreeProv = selectedProv == AiProvider.NVIDIA_FREE
+                val displayValue = if (isFreeProv) "Free Access (Pre-configured)" else (keysState[selectedProv] ?: "")
                 OutlinedTextField(
-                    value            = keysState[selectedProv] ?: "",
+                    value            = displayValue,
                     onValueChange    = { newKey ->
-                        keysState = keysState.toMutableMap().apply { put(selectedProv, newKey) }
+                        if (!isFreeProv) {
+                            keysState = keysState.toMutableMap().apply { put(selectedProv, newKey) }
+                        }
                     },
+                    enabled          = !isFreeProv,
                     label            = {
-                        Text("API Key", color = Color.Gray, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
+                        Text(
+                            text = if (isFreeProv) "API Key (Provided)" else "API Key",
+                            color = Color.Gray,
+                            fontSize = 12.sp,
+                            fontFamily = FontFamily.Monospace
+                        )
                     },
                     placeholder      = {
                         Text(
@@ -201,21 +211,25 @@ fun SettingsDialog(
                     singleLine       = true,
                     modifier         = Modifier.fillMaxWidth(),
                     shape            = RoundedCornerShape(12.dp),
-                    visualTransformation = if (showKey) VisualTransformation.None else PasswordVisualTransformation(),
+                    visualTransformation = if (isFreeProv) VisualTransformation.None else (if (showKey) VisualTransformation.None else PasswordVisualTransformation()),
                     keyboardOptions  = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon     = {
-                        Icon(
-                            if (showKey) Icons.Default.Warning else Icons.Default.Lock,
-                            contentDescription = "toggle visibility",
-                            tint     = Accent,
-                            modifier = Modifier.clickable { showKey = !showKey }
-                        )
+                        if (!isFreeProv) {
+                            Icon(
+                                if (showKey) Icons.Default.Warning else Icons.Default.Lock,
+                                contentDescription = "toggle visibility",
+                                tint     = Accent,
+                                modifier = Modifier.clickable { showKey = !showKey }
+                            )
+                        }
                     },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor   = RedTeamRed,
                         unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
+                        disabledBorderColor  = Color.White.copy(alpha = 0.1f),
                         focusedTextColor     = Color.White,
                         unfocusedTextColor   = Color.LightGray,
+                        disabledTextColor    = Color.Gray,
                         cursorColor          = RedTeamRed
                     )
                 )

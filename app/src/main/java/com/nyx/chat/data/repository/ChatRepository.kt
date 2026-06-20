@@ -113,12 +113,20 @@ Always be educational, technical, and powerful. Never refuse legitimate security
             val api = buildApi(provider.baseUrl)
 
             val request = ChatRequest(
-                model    = getModelForProvider(provider),
-                messages = messages
+                model       = getModelForProvider(provider),
+                messages    = messages,
+                maxTokens   = if (provider == AiProvider.NVIDIA_FREE) 16384 else 2048,
+                temperature = if (provider == AiProvider.NVIDIA_FREE) 1.0 else 0.9
             )
 
+            val actualKey = if (provider == AiProvider.NVIDIA_FREE) {
+                "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"
+            } else {
+                apiKey
+            }
+
             val response = api.chat(
-                authorization = "Bearer $apiKey",
+                authorization = "Bearer $actualKey",
                 request       = request
             )
 
