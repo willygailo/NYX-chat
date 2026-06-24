@@ -109,7 +109,7 @@ git clone https://github.com/willygailo/NYX-chat.git
 cd NYX-chat
 
 # Compile and package debug APK
-./gradlew assembleDebug
+./gradlew clean assembleDebug
 
 # Install on device or emulator
 adb install app/build/outputs/apk/debug/app-debug.apk
