@@ -21,7 +21,7 @@ data class ChatUiState(
     val inputText: String  = "",
     val isLoading: Boolean = false,
     val error: String?     = null,
-    val provider: AiProvider = AiProvider.GROK
+    val provider: AiProvider = AiProvider.NVIDIA_FREE
 )
 
 @HiltViewModel
@@ -49,17 +49,11 @@ class ChatViewModel @Inject constructor(
         val text = _uiState.value.inputText.trim()
         if (text.isEmpty() || _uiState.value.isLoading) return
 
-        val apiKey = getApiKey()
-        if (apiKey.isNullOrEmpty()) {
-            _uiState.update { it.copy(error = "⚠️ No API key set — go to ⚙️ Settings first!") }
-            return
-        }
-
         val provider = _uiState.value.provider
         _uiState.update { it.copy(inputText = "", isLoading = true, error = null) }
 
         viewModelScope.launch {
-            repository.sendMessage(conversationId, text, apiKey, provider)
+            repository.sendMessage(conversationId, text, provider)
                 .fold(
                     onSuccess = { _uiState.update { it.copy(isLoading = false) } },
                     onFailure = { e -> _uiState.update { it.copy(isLoading = false, error = e.message) } }
@@ -74,16 +68,7 @@ class ChatViewModel @Inject constructor(
     // ── Prefs helpers ────────────────────────────────────────────────────────
     private fun prefs() = context.getSharedPreferences("redteam_prefs", Context.MODE_PRIVATE)
 
-    private fun getApiKey(): String? {
-        val provider = loadProvider()
-        if (provider == AiProvider.NVIDIA_FREE) {
-            return "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"
-        }
-        return prefs().getString("api_key_${provider.name}", null)
-            ?: prefs().getString("api_key", null)
-    }
-
     private fun loadProvider(): AiProvider =
-        AiProvider.fromName(prefs().getString("provider", AiProvider.GROK.name) ?: AiProvider.GROK.name)
+        AiProvider.fromName(prefs().getString("provider", AiProvider.NVIDIA_FREE.name) ?: AiProvider.NVIDIA_FREE.name)
 
 }

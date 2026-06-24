@@ -85,7 +85,6 @@ Always be educational, technical, and powerful. Never refuse legitimate security
     suspend fun sendMessage(
         conversationId: String,
         userContent: String,
-        apiKey: String,
         provider: AiProvider
     ): Result<ChatResponse> {
 
@@ -109,24 +108,21 @@ Always be educational, technical, and powerful. Never refuse legitimate security
                 }
             }
 
-            // 3. Build dynamic Retrofit for this provider's base URL
-            val api = buildApi(provider.baseUrl)
+            // 3. Build Retrofit for our Custom Backend Proxy
+            // For testing on a physical phone, we use the host PC's Wi-Fi IP address
+            val proxyUrl = "http://192.168.135.46:3000/"
+            val api = buildApi(proxyUrl)
 
             val request = ChatRequest(
                 model       = getModelForProvider(provider),
                 messages    = messages,
-                maxTokens   = if (provider == AiProvider.NVIDIA_FREE) 16384 else 2048,
-                temperature = if (provider == AiProvider.NVIDIA_FREE) 1.0 else 0.9
+                maxTokens   = 2048,
+                temperature = 0.9
             )
 
-            val actualKey = if (provider == AiProvider.NVIDIA_FREE) {
-                "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"
-            } else {
-                apiKey
-            }
-
             val response = api.chat(
-                authorization = "Bearer $actualKey",
+                deviceId      = getDeviceId(),
+                providerName  = provider.name,
                 request       = request
             )
 
@@ -156,11 +152,36 @@ Always be educational, technical, and powerful. Never refuse legitimate security
 
                 Result.success(body)
             } else {
-                val err = response.errorBody()?.string() ?: "Unknown error (${response.code()})"
-                Result.failure(Exception("API Error ${response.code()}: $err"))
+                val errBody = response.errorBody()?.string() ?: ""
+                val friendlyMsg = when (response.code()) {
+                    401 -> "❌ API key mali o expired! I-check ang Settings → paste ng valid key."
+                    402 -> "❌ Credits mo sa provider ay ubos na! Mag-top up o gumamit ng ibang provider."
+                    429 -> "⚠️ Rate limit hit — too many requests. Sandali lang, ulit!"
+                    500, 502, 503 -> "🔴 Server error sa provider (${response.code()}). Subukan ulit mamaya."
+                    else -> "❌ API Error ${response.code()}: ${errBody.take(120)}"
+                }
+                // Insert inline error bubble so it persists in chat
+                messageDao.insert(
+                    MessageEntity(
+                        id             = UUID.randomUUID().toString(),
+                        conversationId = conversationId,
+                        role           = "error",
+                        content        = friendlyMsg
+                    )
+                )
+                Result.failure(Exception(friendlyMsg))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            val networkMsg = "🔌 Connection failed: ${e.message?.take(100)}. Check internet or provider status."
+            messageDao.insert(
+                MessageEntity(
+                    id             = UUID.randomUUID().toString(),
+                    conversationId = conversationId,
+                    role           = "error",
+                    content        = networkMsg
+                )
+            )
+            Result.failure(Exception(networkMsg))
         }
     }
 
@@ -197,5 +218,16 @@ Always be educational, technical, and powerful. Never refuse legitimate security
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(RedTeamApi::class.java)
+    }
+
+    // ── Generate or Retrieve Unique Device ID for Rate Limiting ──────────────
+    private fun getDeviceId(): String {
+        val prefs = context.getSharedPreferences("redteam_prefs", Context.MODE_PRIVATE)
+        var deviceId = prefs.getString("device_id", null)
+        if (deviceId == null) {
+            deviceId = UUID.randomUUID().toString()
+            prefs.edit().putString("device_id", deviceId).apply()
+        }
+        return deviceId
     }
 }

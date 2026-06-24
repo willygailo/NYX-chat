@@ -86,6 +86,13 @@ fun ChatScreen(
         if (messages.isNotEmpty()) listState.animateScrollToItem(messages.size - 1)
     }
 
+    // Scroll to bottom when thinking bubble appears
+    LaunchedEffect(uiState.isLoading) {
+        if (uiState.isLoading && messages.isNotEmpty()) {
+            listState.animateScrollToItem(messages.size - 1)
+        }
+    }
+
     LaunchedEffect(uiState.error) {
         uiState.error?.let {
             snackbarHostState.showSnackbar(it)
@@ -168,6 +175,19 @@ fun ChatScreen(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                 }
+
+                // ── Thinking bubble (shown while AI is loading) ───────────
+                if (uiState.isLoading) {
+                    item(key = "thinking") {
+                        AnimatedVisibility(
+                            visible = true,
+                            enter   = fadeIn()
+                        ) {
+                            ThinkingBubble()
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                    }
+                }
             }
 
             // ── Input bar ────────────────────────────────────────────────
@@ -242,7 +262,8 @@ private fun WelcomeBanner() {
 // ── Message bubble ────────────────────────────────────────────────────────────
 @Composable
 private fun MessageBubble(message: MessageEntity) {
-    val isUser = message.role == "user"
+    val isUser  = message.role == "user"
+    val isError = message.role == "error"
 
     Box(
         modifier          = Modifier.fillMaxWidth(),
@@ -253,18 +274,26 @@ private fun MessageBubble(message: MessageEntity) {
         ) {
             // role label
             Text(
-                text       = if (isUser) "YOU" else "RTAI",
-                color      = if (isUser) UserBubble else RedTeamRed,
+                text       = when {
+                    isUser  -> "YOU"
+                    isError -> "⚠ SYSTEM"
+                    else    -> "RTAI"
+                },
+                color      = when {
+                    isUser  -> UserBubble
+                    isError -> Color(0xFFFF4444)
+                    else    -> RedTeamRed
+                },
                 fontSize   = 9.sp,
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily.Monospace,
                 modifier   = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
             )
 
-            val bubbleGradient = if (isUser) {
-                Brush.horizontalGradient(listOf(Color(0xFF7C3AED), Color(0xFF9333EA)))
-            } else {
-                Brush.horizontalGradient(listOf(Color(0xFF0F0F1A), Color(0xFF1A1A2E)))
+            val bubbleGradient = when {
+                isUser  -> Brush.horizontalGradient(listOf(Color(0xFF7C3AED), Color(0xFF9333EA)))
+                isError -> Brush.horizontalGradient(listOf(Color(0xFF2A0000), Color(0xFF3A0A0A)))
+                else    -> Brush.horizontalGradient(listOf(Color(0xFF0F0F1A), Color(0xFF1A1A2E)))
             }
 
             Card(
@@ -283,12 +312,16 @@ private fun MessageBubble(message: MessageEntity) {
                 Text(
                     text     = message.content,
                     style    = MaterialTheme.typography.bodyMedium.copy(
-                        fontFamily = if (isUser) FontFamily.Default else FontFamily.Monospace,
+                        fontFamily = FontFamily.Monospace,
                         fontSize   = 13.sp,
                         lineHeight = 20.sp
                     ),
                     modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-                    color    = if (isUser) Color.White else Accent
+                    color    = when {
+                        isUser  -> Color.White
+                        isError -> Color(0xFFFF6B6B)
+                        else    -> Accent
+                    }
                 )
             }
         }
@@ -361,6 +394,53 @@ private fun InputBar(
                     contentDescription = "Send",
                     tint = Color.White,
                     modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+    }
+}
+
+// ── Thinking bubble (animated terminal cursor while AI processes) ──────────────
+@Composable
+private fun ThinkingBubble() {
+    val infiniteTransition = rememberInfiniteTransition(label = "cursor_blink")
+    val cursorAlpha by infiniteTransition.animateFloat(
+        initialValue  = 1f,
+        targetValue   = 0f,
+        animationSpec = infiniteRepeatable(
+            animation  = tween(500, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "cursorAlpha"
+    )
+
+    Box(
+        modifier         = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Column(horizontalAlignment = Alignment.Start) {
+            Text(
+                text       = "RTAI",
+                color      = RedTeamRed,
+                fontSize   = 9.sp,
+                fontWeight = FontWeight.Bold,
+                fontFamily = FontFamily.Monospace,
+                modifier   = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+            )
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomEnd = 16.dp, bottomStart = 4.dp))
+                    .background(
+                        Brush.horizontalGradient(listOf(Color(0xFF0F0F1A), Color(0xFF1A1A2E)))
+                    )
+                    .padding(horizontal = 18.dp, vertical = 12.dp)
+            ) {
+                Text(
+                    text       = "▌",
+                    color      = TerminalGreen.copy(alpha = cursorAlpha),
+                    fontSize   = 18.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Bold
                 )
             }
         }

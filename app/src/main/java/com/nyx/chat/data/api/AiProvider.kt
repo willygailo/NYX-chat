@@ -62,11 +62,11 @@ enum class AiProvider(
         displayName   = "NVIDIA Free AI",
         baseUrl       = "https://integrate.api.nvidia.com/",
         defaultModel  = "moonshotai/kimi-k2.6",
-        keyHint       = "Free Access (Pre-configured)"
+        keyHint       = "nvapi-... (free key @ build.nvidia.com)"
     );
 
     companion object {
         fun fromName(name: String): AiProvider =
-            entries.firstOrNull { it.name == name } ?: GROK
+            entries.firstOrNull { it.name == name } ?: NVIDIA_FREE
     }
 }

@@ -13,7 +13,8 @@ interface RedTeamApi {
 
     @POST("v1/chat/completions")
     suspend fun chat(
-        @Header("Authorization") authorization: String,
+        @Header("x-device-id") deviceId: String,
+        @Header("x-ai-provider") providerName: String,
         @Body request: ChatRequest
     ): Response<ChatResponse>
 }

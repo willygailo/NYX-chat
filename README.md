@@ -45,7 +45,7 @@ If you find this client helpful for your operations, exploit research, or daily 
 ## ✨ Key Features
 
 - **8 Core AI Providers:** Connect dynamically to xAI Grok, OpenAI, OpenRouter, Groq, Mistral AI, Together AI, DeepSeek, and Perplexity.
-- **Independent API Key Storage:** Save and manage keys for multiple providers simultaneously without overwriting them. Stored securely on-device via `SharedPreferences`.
+- **Free & Online Access:** No API keys required! All API calls are securely proxied through our dedicated Node.js backend with intelligent device-based rate limiting.
 - **Hacker Terminal Aesthetic:** Designed with a sleek, pitch-black dark theme, warning-red highlights, and console-green accents using monospace typography.
 - **Offline Mission Log:** All operations and conversation history are saved securely in a local Room database (SQLite) for instant retrieval.
 - **Auto Language Matching:** The AI automatically detects your input language (English, Tagalog, Spanish, Japanese, etc.) and responds in the exact same tongue.
@@ -62,7 +62,7 @@ com.nyx.chat/
 │   │   ├── AiProvider.kt     # Enum defining all 8 providers
 │   │   ├── ChatRequest.kt
 │   │   ├── ChatResponse.kt
-│   │   └── RedTeamApi.kt     # Unified endpoint interface
+│   │   └── RedTeamApi.kt     # Unified proxy endpoint interface
 │   ├── local/            # Room database, entities & DAOs
 │   │   ├── AppDatabase.kt
 │   │   ├── ConversationDao.kt
@@ -70,7 +70,7 @@ com.nyx.chat/
 │   │   ├── MessageDao.kt
 │   │   └── MessageEntity.kt
 │   └── repository/       # Single source of truth & dynamic Retrofit builder
-│       └── ChatRepository.kt
+│       └── ChatRepository.kt # Handles Device UUID & Backend Proxy Routing
 ├── di/                   # Dagger Hilt Modules
 │   └── AppModule.kt
 ├── ui/

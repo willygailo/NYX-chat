@@ -61,7 +61,7 @@ fun SettingsDialog(
     val prefs   = remember { context.getSharedPreferences("redteam_prefs", Context.MODE_PRIVATE) }
 
     var selectedProv by remember {
-        mutableStateOf(AiProvider.fromName(prefs.getString("provider", AiProvider.GROK.name) ?: AiProvider.GROK.name))
+        mutableStateOf(AiProvider.fromName(prefs.getString("provider", AiProvider.NVIDIA_FREE.name) ?: AiProvider.NVIDIA_FREE.name))
     }
     
     val initialKeys = remember {
@@ -182,19 +182,15 @@ fun SettingsDialog(
                     modifier   = Modifier.padding(bottom = 6.dp)
                 )
 
-                val isFreeProv = selectedProv == AiProvider.NVIDIA_FREE
-                val displayValue = if (isFreeProv) "Free Access (Pre-configured)" else (keysState[selectedProv] ?: "")
                 OutlinedTextField(
-                    value            = displayValue,
+                    value            = keysState[selectedProv] ?: "",
                     onValueChange    = { newKey ->
-                        if (!isFreeProv) {
-                            keysState = keysState.toMutableMap().apply { put(selectedProv, newKey) }
-                        }
+                        keysState = keysState.toMutableMap().apply { put(selectedProv, newKey) }
                     },
-                    enabled          = !isFreeProv,
+                    enabled          = true,
                     label            = {
                         Text(
-                            text = if (isFreeProv) "API Key (Provided)" else "API Key",
+                            text = "API Key",
                             color = Color.Gray,
                             fontSize = 12.sp,
                             fontFamily = FontFamily.Monospace
@@ -211,30 +207,37 @@ fun SettingsDialog(
                     singleLine       = true,
                     modifier         = Modifier.fillMaxWidth(),
                     shape            = RoundedCornerShape(12.dp),
-                    visualTransformation = if (isFreeProv) VisualTransformation.None else (if (showKey) VisualTransformation.None else PasswordVisualTransformation()),
+                    visualTransformation = if (showKey) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions  = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon     = {
-                        if (!isFreeProv) {
-                            Icon(
-                                if (showKey) Icons.Default.Warning else Icons.Default.Lock,
-                                contentDescription = "toggle visibility",
-                                tint     = Accent,
-                                modifier = Modifier.clickable { showKey = !showKey }
-                            )
-                        }
+                        Icon(
+                            if (showKey) Icons.Default.Warning else Icons.Default.Lock,
+                            contentDescription = "toggle visibility",
+                            tint     = Accent,
+                            modifier = Modifier.clickable { showKey = !showKey }
+                        )
                     },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor   = RedTeamRed,
                         unfocusedBorderColor = Color.White.copy(alpha = 0.2f),
-                        disabledBorderColor  = Color.White.copy(alpha = 0.1f),
                         focusedTextColor     = Color.White,
                         unfocusedTextColor   = Color.LightGray,
-                        disabledTextColor    = Color.Gray,
                         cursorColor          = RedTeamRed
                     )
                 )
 
                 Spacer(modifier = Modifier.height(6.dp))
+
+                if (selectedProv == AiProvider.NVIDIA_FREE) {
+                    Text(
+                        text       = "🆓 Free key: build.nvidia.com → Log in → Get API Key → paste above",
+                        color      = Accent.copy(alpha = 0.8f),
+                        fontSize   = 10.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
+
                 Text(
                     text       = "🔒 Stored locally. Never transmitted except to the selected provider.",
                     color      = Color.Gray,
