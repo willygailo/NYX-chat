@@ -30,9 +30,11 @@
 
 ---
 
-## ⭐️ Support the Project
+## ⭐️ Support the Project & Feedback
 
-If you find this client helpful for your operations, exploit research, or daily workflows, please consider starring the repository! It helps show support and keeps the project growing.
+Thank you so much for using **NYX Chat**! If you liked the application or want to request new features, feel free to open an issue or share your feedback. 
+
+If you find this client helpful for your operations, exploit research, or daily workflows, please consider starring the repository! A little support goes a long way and helps keep this project active and growing.
 
 <p align="center">
   <a href="https://github.com/willygailo/NYX-chat">
