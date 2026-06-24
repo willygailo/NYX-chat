@@ -1,13 +1,11 @@
 package com.nyx.chat.ui.screens.chat
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nyx.chat.data.api.AiProvider
 import com.nyx.chat.data.local.MessageEntity
 import com.nyx.chat.data.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -26,11 +24,10 @@ data class ChatUiState(
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val repository: ChatRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ChatUiState(provider = loadProvider()))
+    private val _uiState = MutableStateFlow(ChatUiState())
     val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
 
     private var _messages: StateFlow<List<MessageEntity>>? = null
@@ -62,13 +59,4 @@ class ChatViewModel @Inject constructor(
     }
 
     fun clearError() = _uiState.update { it.copy(error = null) }
-
-    fun reloadProvider() = _uiState.update { it.copy(provider = loadProvider()) }
-
-    // ── Prefs helpers ────────────────────────────────────────────────────────
-    private fun prefs() = context.getSharedPreferences("redteam_prefs", Context.MODE_PRIVATE)
-
-    private fun loadProvider(): AiProvider =
-        AiProvider.fromName(prefs().getString("provider", AiProvider.NVIDIA_FREE.name) ?: AiProvider.NVIDIA_FREE.name)
-
 }

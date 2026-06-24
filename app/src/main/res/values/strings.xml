@@ -12,5 +12,5 @@
     <string name="cancel">Cancel</string>
     <string name="confirm_delete">Delete mission?</string>
     <string name="no_conversations">No missions yet</string>
-    <string name="version">v2.1.0.0</string>
+    <string name="version">v3.1.0</string>
 </resources>

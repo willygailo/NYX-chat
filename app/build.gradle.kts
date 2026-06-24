@@ -15,8 +15,8 @@ android {
         applicationId = "com.nyx.chat"
         minSdk = 26
         targetSdk = 35
-        versionCode = 210
-        versionName = "2.1.0.0"
+        versionCode = 310
+        versionName = "3.1.0"
     }
 
     buildTypes {

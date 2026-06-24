@@ -1,7 +1,7 @@
 package com.nyx.chat.data.api
 
 /**
- * Red Team AI v2.1.0.0
+ * Red Team AI v3.1.0
  * Supported AI providers — all use OpenAI-compatible /v1/chat/completions endpoint
  */
 enum class AiProvider(

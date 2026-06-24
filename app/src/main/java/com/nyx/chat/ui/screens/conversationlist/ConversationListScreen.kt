@@ -81,7 +81,7 @@ fun ConversationListScreen(
                             fontFamily = FontFamily.Monospace
                         )
                         Text(
-                            text       = "v2.1.0.0 · Offensive Security AI",
+                            text       = "v3.1.0 · Offensive Security AI",
                             color      = Accent,
                             fontSize   = 10.sp,
                             fontFamily = FontFamily.Monospace
@@ -135,7 +135,7 @@ fun ConversationListScreen(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text       = "Set your API key in ⚙️ Settings first",
+                        text       = "🔴 All systems operational — ready to execute",
                         color      = Accent.copy(alpha = 0.7f),
                         fontFamily = FontFamily.Monospace,
                         fontSize   = 11.sp

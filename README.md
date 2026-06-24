@@ -25,7 +25,7 @@
 <p align="center">
   <b>NYX Chat</b> (powered by <i>Red Team AI</i>) is a premium, native Android conversation client designed specifically for offensive security researchers, penetration testers, and cybersecurity enthusiasts. 
   <br/><br/>
-  Featuring a hot-warning, pitch-black hacker terminal aesthetic, it offers seamless connectivity to <b>8 core AI providers</b> with independent, locally-secured API key storage and automated multi-language response matching.
+  Featuring a hot-warning, pitch-black hacker terminal aesthetic, it comes pre-configured with a direct NVIDIA API key, offering instant access out-of-the-box with automated multi-language response matching and zero setup required.
 </p>
 
 ---
@@ -44,8 +44,8 @@ If you find this client helpful for your operations, exploit research, or daily 
 
 ## ✨ Key Features
 
-- **8 Core AI Providers:** Connect dynamically to xAI Grok, OpenAI, OpenRouter, Groq, Mistral AI, Together AI, DeepSeek, and Perplexity.
-- **Free & Online Access:** No API keys required! All API calls are securely proxied through our dedicated Node.js backend with intelligent device-based rate limiting.
+- **Direct NVIDIA Free AI Integration:** Ready-to-run with a pre-configured, hard-coded API key for immediate operation.
+- **Zero Server Setup:** No local backend server or proxy configuration needed! The app makes direct, secure calls out-of-the-box.
 - **Hacker Terminal Aesthetic:** Designed with a sleek, pitch-black dark theme, warning-red highlights, and console-green accents using monospace typography.
 - **Offline Mission Log:** All operations and conversation history are saved securely in a local Room database (SQLite) for instant retrieval.
 - **Auto Language Matching:** The AI automatically detects your input language (English, Tagalog, Spanish, Japanese, etc.) and responds in the exact same tongue.
@@ -88,13 +88,6 @@ com.nyx.chat/
 ---
 
 ## 🚀 Getting Started
-
-### 🌐 Starting the Backend Proxy
-Before using the app, you need to run the Node.js backend proxy locally:
-```bash
-cd ~/Documents/nyx-chat-backend
-node server.js
-```
 
 ### 📥 Download Latest APK
 You can easily install NYX Chat by downloading the latest pre-compiled APK directly from our Releases page:
