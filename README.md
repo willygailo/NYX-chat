@@ -89,6 +89,13 @@ com.nyx.chat/
 
 ## 🚀 Getting Started
 
+### 🌐 Starting the Backend Proxy
+Before using the app, you need to run the Node.js backend proxy locally:
+```bash
+cd ~/Documents/nyx-chat-backend
+node server.js
+```
+
 ### 📥 Download Latest APK
 You can easily install NYX Chat by downloading the latest pre-compiled APK directly from our Releases page:
 - **[Download NYX-chat-v3.0.0.apk](https://github.com/willygailo/NYX-chat/releases/latest)**
