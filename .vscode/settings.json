@@ -1,6 +1,7 @@
 {
     "powerquery.client.additionalSymbolsDirectories": [
-        "/home/willygailo/Documents/Cline/.vscode/excel-pq-symbols"
+        "/home/willygailo/Documents/Cline/.vscode/excel-pq-symbols",
+        "/home/willygailo/Documents/nyx-chat/.vscode/excel-pq-symbols"
     ],
     "java.configuration.updateBuildConfiguration": "automatic"
 }
