@@ -17,22 +17,23 @@
   <img src="https://img.shields.io/badge/Kotlin-2.1.0-%237F52FF?style=flat-square&logo=kotlin&logoColor=white" alt="Kotlin 2.1.0"/>
   <img src="https://img.shields.io/badge/Android%20Compile%20SDK-35-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Compile SDK 35"/>
   <img src="https://img.shields.io/badge/Android%20Min%20SDK-26-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Min SDK 26"/>
+  <img src="https://img.shields.io/badge/Model-Kimi%20K2-FF5555?style=flat-square&logo=nvidia&logoColor=white" alt="Model Kimi K2"/>
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="License MIT"/>
 </p>
 
 ---
 
 <p align="center">
-  <b>NYX Chat</b> (powered by <i>Red Team AI</i>) is a premium, native Android conversation client designed specifically for offensive security researchers, penetration testers, and cybersecurity enthusiasts. 
+  <b>NYX Chat</b> (powered by <i>Red Team AI</i>) is a premium, native Android conversation client designed specifically for offensive security researchers, penetration testers, and cybersecurity enthusiasts.
   <br/><br/>
-  Featuring a hot-warning, pitch-black hacker terminal aesthetic, it comes pre-configured with a direct NVIDIA API key, offering instant access out-of-the-box with automated multi-language response matching and zero setup required.
+  Featuring a hot-warning, pitch-black hacker terminal aesthetic, it connects <b>directly</b> to the NVIDIA AI API (Kimi K2 model) — offering instant access out-of-the-box with automated multi-language response matching and <b>zero setup required</b>.
 </p>
 
 ---
 
 ## ⭐️ Support the Project & Feedback
 
-Thank you so much for using **NYX Chat**! If you liked the application or want to request new features, feel free to open an issue or share your feedback. 
+Thank you so much for using **NYX Chat**! If you liked the application or want to request new features, feel free to open an issue or share your feedback.
 
 If you find this client helpful for your operations, exploit research, or daily workflows, please consider starring the repository! A little support goes a long way and helps keep this project active and growing.
 
@@ -46,12 +47,14 @@ If you find this client helpful for your operations, exploit research, or daily 
 
 ## ✨ Key Features
 
-- **Direct NVIDIA Free AI Integration:** Ready-to-run with a pre-configured, hard-coded API key for immediate operation.
-- **Zero Server Setup:** No local backend server or proxy configuration needed! The app makes direct, secure calls out-of-the-box.
-- **Hacker Terminal Aesthetic:** Designed with a sleek, pitch-black dark theme, warning-red highlights, and console-green accents using monospace typography.
+- **Direct NVIDIA Free AI Integration:** Ready-to-run with a pre-configured API key — calls go straight to `integrate.api.nvidia.com`. No proxy, no backend, no setup.
+- **Zero Server Setup:** No local backend server or proxy configuration needed. Install the APK and it works immediately.
+- **Model: moonshotai/kimi-k2.6:** Powered by the Kimi K2 large language model via NVIDIA's free inference endpoint.
+- **Hacker Terminal Aesthetic:** Sleek, pitch-black dark theme with warning-red highlights and console-green accents using monospace typography.
 - **Offline Mission Log:** All operations and conversation history are saved securely in a local Room database (SQLite) for instant retrieval.
-- **Auto Language Matching:** The AI automatically detects your input language (English, Tagalog, Spanish, Japanese, etc.) and responds in the exact same tongue.
-- **Offensive Security System Prompt:** Custom persona tailored for exploit development, CTFs, vulnerability scanning, OSINT guidance, and reverse engineering.
+- **Full Message Context:** Sends up to the last 40 messages as history on every request for coherent, context-aware responses.
+- **Auto Language Matching:** The AI automatically detects your input language (English, Tagalog, Spanish, etc.) and responds in the exact same tongue.
+- **Offensive Security System Prompt:** Custom Red Team AI persona tailored for exploit development, CTFs, OSINT, vulnerability scanning, and reverse engineering.
 
 ---
 
@@ -60,31 +63,31 @@ If you find this client helpful for your operations, exploit research, or daily 
 ```
 com.nyx.chat/
 ├── data/
-│   ├── api/              # Retrofit API definitions & data models
-│   │   ├── AiProvider.kt     # Enum defining all 8 providers
-│   │   ├── ChatRequest.kt
-│   │   ├── ChatResponse.kt
-│   │   └── RedTeamApi.kt     # Unified proxy endpoint interface
-│   ├── local/            # Room database, entities & DAOs
+│   ├── api/                  # Retrofit API definitions & data models
+│   │   ├── AiProvider.kt     # Enum defining all supported providers & base URLs
+│   │   ├── ChatRequest.kt    # OpenAI-compatible request body
+│   │   ├── ChatResponse.kt   # OpenAI-compatible response body
+│   │   └── RedTeamApi.kt     # Retrofit interface (direct API mode)
+│   ├── local/                # Room database, entities & DAOs
 │   │   ├── AppDatabase.kt
 │   │   ├── ConversationDao.kt
 │   │   ├── ConversationEntity.kt
 │   │   ├── MessageDao.kt
 │   │   └── MessageEntity.kt
-│   └── repository/       # Single source of truth & dynamic Retrofit builder
-│       └── ChatRepository.kt # Handles Device UUID & Backend Proxy Routing
-├── di/                   # Dagger Hilt Modules
-│   └── AppModule.kt
+│   └── repository/           # Single source of truth
+│       └── ChatRepository.kt # Builds Retrofit per provider, sends chat requests
+├── di/                       # Dagger Hilt Modules
+│   └── NetworkModule.kt      # (intentionally minimal — network built dynamically)
 ├── ui/
-│   ├── navigation/       # Jetpack Compose navigation graph
-│   │   └── NavGraph.kt
+│   ├── navigation/           # Jetpack Compose navigation graph
+│   │   └── NavGraph.kt       # Auto-launches into a new chat on startup
 │   ├── screens/
-│   │   ├── chat/         # Terminal-style chat & context loader
-│   │   ├── conversationlist/ # Card-based operation threads
-│   │   └── settings/     # Multi-key settings dialog
-│   └── theme/            # Pitch-black dark theme & monospace typography
-├── MainActivity.kt       # Single activity host
-└── NyxApp.kt             # Application controller
+│   │   ├── chat/             # Terminal-style chat screen & ViewModel
+│   │   ├── conversationlist/ # Card-based operation history screen
+│   │   └── settings/         # Info dialog (API pre-configured, read-only)
+│   └── theme/                # Pitch-black dark theme & monospace typography
+├── MainActivity.kt           # Single activity host
+└── NyxApp.kt                 # Application controller (@HiltAndroidApp)
 ```
 
 ---
@@ -92,18 +95,27 @@ com.nyx.chat/
 ## 🚀 Getting Started
 
 ### 📥 Download Latest APK
-You can easily install NYX Chat by downloading the latest pre-compiled APK directly from our Releases page:
+Install NYX Chat instantly by downloading the latest pre-compiled APK from the Releases page:
+
 - **[Download NYX-chat-v3.1.0.apk](https://github.com/willygailo/NYX-chat/releases/latest)**
+
+> **No API key needed.** Just install and start chatting — the app connects directly to NVIDIA AI out-of-the-box.
 
 *(Optional) If you prefer to build from source, follow the instructions below:*
 
-### Prerequisites
+---
 
-- **Android Studio Ladybug (2024.3+)** or newer
-- **JDK 17** (configured in `gradle.properties` via `org.gradle.java.home`)
-- **Android SDK 35**
+### 🛠 Build from Source
 
-### Clone & Build
+#### Prerequisites
+
+| Tool | Version |
+|------|---------|
+| Android Studio | Ladybug (2024.3+) or newer |
+| JDK | 17 |
+| Android SDK | 35 |
+
+#### Clone & Build
 
 ```bash
 # Clone the repository
@@ -113,20 +125,63 @@ cd NYX-chat
 # Compile and package debug APK
 ./gradlew clean assembleDebug
 
-# Install on device or emulator
+# Install on connected device via ADB
 adb install app/build/outputs/apk/debug/app-debug.apk
 ```
+
+#### Install Without ADB
+
+If you don't have ADB set up, transfer the APK to your phone manually:
+
+1. Copy `app/build/outputs/apk/debug/app-debug.apk` to your phone (via USB file transfer, Google Drive, etc.)
+2. On your phone: **Settings → Apps → Special App Access → Install Unknown Apps** → allow your file manager
+3. Tap the APK file to install
+
+---
+
+## 🌐 API Configuration
+
+| Setting | Value |
+|---------|-------|
+| Provider | NVIDIA Free AI |
+| Endpoint | `https://integrate.api.nvidia.com/v1/chat/completions` |
+| Model | `moonshotai/kimi-k2.6` |
+| Auth | Pre-configured Bearer token |
+| Mode | Direct API (no proxy, no backend server) |
+| Max History | Last 40 messages per request |
+| Max Tokens | 2048 per response |
+
+> **Want to use your own NVIDIA API key?** Get a free key at [build.nvidia.com](https://build.nvidia.com), then update `NVIDIA_API_KEY` in [`ChatRepository.kt`](app/src/main/java/com/nyx/chat/data/repository/ChatRepository.kt).
 
 ---
 
 ## 🛠 Tech Stack
 
-- **UI:** Jetpack Compose + Material 3
-- **DI:** Dagger Hilt
-- **Persistence:** Room (SQLite)
-- **Networking:** Retrofit + OkHttp (dynamic switching)
-- **Serialization:** Gson
-- **Markdown:** Markwon
+| Layer | Library |
+|-------|---------|
+| UI | Jetpack Compose + Material 3 |
+| DI | Dagger Hilt |
+| Persistence | Room (SQLite) |
+| Networking | Retrofit 2 + OkHttp 4 |
+| Serialization | Gson |
+| Markdown | Markwon |
+
+---
+
+## 📋 Changelog
+
+### v3.1.0 *(Current)*
+- ✅ **Removed local proxy server dependency** — app now calls NVIDIA API directly
+- ✅ **Hardcoded NVIDIA API key** — zero configuration required on install
+- ✅ **Auto-launch** — app opens directly into a new chat on startup
+- ✅ **Settings simplified** — read-only info dialog (no more key input needed)
+- ✅ **System prompt upgraded** — Red Team AI v3.1.0 persona with full capability list
+- ✅ **Kimi K2 model** — upgraded to `moonshotai/kimi-k2.6`
+
+### v2.1.0.0
+- Required a local Node.js proxy server running on the same Wi-Fi network
+- Supported multiple providers (Grok, OpenAI, OpenRouter, Groq, Mistral, etc.) with user-entered API keys
+- Settings dialog allowed provider selection and API key input per provider
 
 ---
 
