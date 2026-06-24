@@ -1,5 +1,5 @@
 # 🌌 NYX Chat
-### 🔴 Red Team AI v2.1.0.0
+### 🔴 Red Team AI v3.0.0
 
 <p align="center">
   <a href="https://github.com/willygailo/NYX-chat/stargazers">
@@ -88,6 +88,12 @@ com.nyx.chat/
 ---
 
 ## 🚀 Getting Started
+
+### 📥 Download Latest APK
+You can easily install NYX Chat by downloading the latest pre-compiled APK directly from our Releases page:
+- **[Download NYX-chat-v3.0.0.apk](https://github.com/willygailo/NYX-chat/releases/latest)**
+
+*(Optional) If you prefer to build from source, follow the instructions below:*
 
 ### Prerequisites
 
