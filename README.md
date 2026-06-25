@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Kotlin-2.1.0-%237F52FF?style=flat-square&logo=kotlin&logoColor=white" alt="Kotlin 2.1.0"/>
   <img src="https://img.shields.io/badge/Android%20Compile%20SDK-35-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Compile SDK 35"/>
   <img src="https://img.shields.io/badge/Android%20Min%20SDK-26-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Min SDK 26"/>
-  <img src="https://img.shields.io/badge/Model-Kimi%20K2-FF5555?style=flat-square&logo=nvidia&logoColor=white" alt="Model Kimi K2"/>
+  <img src="https://img.shields.io/badge/Model-Llama%203.1%2070B-FF5555?style=flat-square&logo=nvidia&logoColor=white" alt="Model Llama 3.1 70B"/>
   <img src="https://img.shields.io/badge/License-MIT-yellow?style=flat-square" alt="License MIT"/>
 </p>
 
@@ -26,7 +26,7 @@
 <p align="center">
   <b>NYX Chat</b> (powered by <i>Red Team AI</i>) is a premium, native Android conversation client designed specifically for offensive security researchers, penetration testers, and cybersecurity enthusiasts.
   <br/><br/>
-  Featuring a hot-warning, pitch-black hacker terminal aesthetic, it connects <b>directly</b> to the NVIDIA AI API (Kimi K2 model) — offering instant access out-of-the-box with automated multi-language response matching and <b>zero setup required</b>.
+  Featuring a hot-warning, pitch-black hacker terminal aesthetic, it connects <b>directly</b> to the NVIDIA AI API (Llama 3.1 70B model) — offering instant access out-of-the-box with automated multi-language response matching and <b>zero setup required</b>.
 </p>
 
 ---
@@ -49,7 +49,7 @@ If you find this client helpful for your operations, exploit research, or daily 
 
 - **Direct NVIDIA Free AI Integration:** Ready-to-run with a pre-configured API key — calls go straight to `integrate.api.nvidia.com`. No proxy, no backend, no setup.
 - **Zero Server Setup:** No local backend server or proxy configuration needed. Install the APK and it works immediately.
-- **Model: moonshotai/kimi-k2.6:** Powered by the Kimi K2 large language model via NVIDIA's free inference endpoint.
+- **Model: meta/llama-3.1-70b-instruct:** Powered by the Llama 3.1 70B Instruct model via NVIDIA's API endpoint.
 - **Hacker Terminal Aesthetic:** Sleek, pitch-black dark theme with warning-red highlights and console-green accents using monospace typography.
 - **Offline Mission Log:** All operations and conversation history are saved securely in a local Room database (SQLite) for instant retrieval.
 - **Full Message Context:** Sends up to the last 40 messages as history on every request for coherent, context-aware responses.
@@ -145,7 +145,7 @@ If you don't have ADB set up, transfer the APK to your phone manually:
 |---------|-------|
 | Provider | NVIDIA Free AI |
 | Endpoint | `https://integrate.api.nvidia.com/v1/chat/completions` |
-| Model | `moonshotai/kimi-k2.6` |
+| Model | `meta/llama-3.1-70b-instruct` |
 | Auth | Pre-configured Bearer token |
 | Mode | Direct API (no proxy, no backend server) |
 | Max History | Last 40 messages per request |
@@ -176,7 +176,7 @@ If you don't have ADB set up, transfer the APK to your phone manually:
 - ✅ **Auto-launch** — app opens directly into a new chat on startup
 - ✅ **Settings simplified** — read-only info dialog (no more key input needed)
 - ✅ **System prompt upgraded** — Red Team AI v3.1.0 persona with full capability list
-- ✅ **Kimi K2 model** — upgraded to `moonshotai/kimi-k2.6`
+- ✅ **Model locked** — switched to `meta/llama-3.1-70b-instruct`
 
 ### v2.1.0.0
 - Required a local Node.js proxy server running on the same Wi-Fi network
