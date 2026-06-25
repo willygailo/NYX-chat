@@ -1,5 +1,5 @@
 # 🌌 NYX Chat
-### 🔴 Red Team AI v3.1.0
+### 🔴 Red Team AI v3.1.2
 
 <p align="center">
   <a href="https://github.com/willygailo/NYX-chat/stargazers">
@@ -97,7 +97,7 @@ com.nyx.chat/
 ### 📥 Download Latest APK
 Install NYX Chat instantly by downloading the latest pre-compiled APK from the Releases page:
 
-- **[Download NYX-chat-v3.1.0.apk](https://github.com/willygailo/NYX-chat/releases/latest)**
+- **[Download NYX-chat-v3.1.2.apk](https://github.com/willygailo/NYX-chat/releases/latest)**
 
 > **No API key needed.** Just install and start chatting — the app connects directly to NVIDIA AI out-of-the-box.
 
@@ -170,13 +170,19 @@ If you don't have ADB set up, transfer the APK to your phone manually:
 
 ## 📋 Changelog
 
-### v3.1.0 *(Current)*
+### v3.1.2 *(Current)*
+- ✅ **Fixed network connectivity** — added `ACCESS_NETWORK_STATE` permission to `AndroidManifest.xml`
+- ✅ **Forced SSL** — disabled insecure cleartext traffic
+- ✅ **Upgraded Model** — locked to `meta/llama-3.1-70b-instruct`
+- ✅ **New API Key** — updated to latest NVIDIA key
+- ✅ **Bumped read timeout** — increased network client timeout to 120s
+
+### v3.1.0
 - ✅ **Removed local proxy server dependency** — app now calls NVIDIA API directly
 - ✅ **Hardcoded NVIDIA API key** — zero configuration required on install
 - ✅ **Auto-launch** — app opens directly into a new chat on startup
 - ✅ **Settings simplified** — read-only info dialog (no more key input needed)
 - ✅ **System prompt upgraded** — Red Team AI v3.1.0 persona with full capability list
-- ✅ **Model locked** — switched to `meta/llama-3.1-70b-instruct`
 
 ### v2.1.0.0
 - Required a local Node.js proxy server running on the same Wi-Fi network
