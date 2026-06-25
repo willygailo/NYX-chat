@@ -1,5 +1,5 @@
 # 🌌 NYX Chat
-### 🔴 Red Team AI v3.1.2
+### 🔴 Red Team AI v3.1.3
 
 <p align="center">
   <a href="https://github.com/willygailo/NYX-chat/stargazers">
@@ -97,7 +97,7 @@ com.nyx.chat/
 ### 📥 Download Latest APK
 Install NYX Chat instantly by downloading the latest pre-compiled APK from the Releases page:
 
-- **[Download NYX-chat-v3.1.2.apk](https://github.com/willygailo/NYX-chat/releases/latest)**
+- **[Download NYX-chat-v3.1.3.apk](https://github.com/willygailo/NYX-chat/releases/latest)**
 
 > **No API key needed.** Just install and start chatting — the app connects directly to NVIDIA AI out-of-the-box.
 
@@ -170,7 +170,12 @@ If you don't have ADB set up, transfer the APK to your phone manually:
 
 ## 📋 Changelog
 
-### v3.1.2 *(Current)*
+### v3.1.3 *(Current)*
+- ✅ **Fixed disappearing messages bug** — changed `SharingStarted.WhileSubscribed(5_000)` to `SharingStarted.Eagerly` in `ChatViewModel` so the Room DB flow stays active during the loading state.
+- ✅ **Synced default model** — ensured `AiProvider.NVIDIA_FREE.defaultModel` matches the hardcoded model (`meta/llama-3.1-70b-instruct`).
+- ✅ **UI version bump** — updated top bar and welcome banner text to v3.1.3.
+
+### v3.1.2
 - ✅ **Fixed network connectivity** — added `ACCESS_NETWORK_STATE` permission to `AndroidManifest.xml`
 - ✅ **Forced SSL** — disabled insecure cleartext traffic
 - ✅ **Upgraded Model** — locked to `meta/llama-3.1-70b-instruct`
