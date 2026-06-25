@@ -61,7 +61,7 @@ enum class AiProvider(
     NVIDIA_FREE(
         displayName   = "NVIDIA Free AI",
         baseUrl       = "https://integrate.api.nvidia.com/",
-        defaultModel  = "moonshotai/kimi-k2.6",
+        defaultModel  = "meta/llama-3.1-70b-instruct",
         keyHint       = "nvapi-... (free key @ build.nvidia.com)"
     );
 

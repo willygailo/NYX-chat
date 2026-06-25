@@ -114,7 +114,7 @@ fun ChatScreen(
                             fontFamily = FontFamily.Monospace
                         )
                         Text(
-                            text       = "v3.1.0 · ${uiState.provider.displayName}",
+                            text       = "v3.1.2 · ${uiState.provider.displayName}",
                             color      = Accent,
                             fontSize   = 10.sp,
                             fontFamily = FontFamily.Monospace
@@ -228,7 +228,7 @@ private fun WelcomeBanner() {
             )
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                text       = "RED TEAM AI v3.1.0",
+                text       = "RED TEAM AI v3.1.2",
                 color      = RedTeamRed.copy(alpha = alpha),
                 fontSize   = 20.sp,
                 fontWeight = FontWeight.ExtraBold,

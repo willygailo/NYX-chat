@@ -35,7 +35,9 @@ class ChatViewModel @Inject constructor(
     fun getMessages(conversationId: String): StateFlow<List<MessageEntity>> {
         if (_messages == null) {
             _messages = repository.observeMessages(conversationId)
-                .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+                // Eagerly keeps the flow alive even during loading/recomposition —
+                // WhileSubscribed(5_000) was causing messages to wipe mid-request.
+                .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
         }
         return _messages!!
     }
